@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Instagram Story Viewer</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #fdfdfd;
+      color: #222;
+      text-align: center;
+      padding: 20px;
+    }
+
+    h1 {
+      color: #e1306c;
+    }
+
+    .input-group {
+      display: flex;
+      gap: 10px;
+      max-width: 400px;
+      margin: 20px auto;
+      flex-wrap: wrap;
+    }
+
+    input[type="text"], button {
+      font-size: 1em;
+      padding: 0.6em;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    button {
+      background: #e1306c;
+      color: white;
+      font-weight: bold;
+      border: none;
+      transition: 0.2s ease;
+    }
+
+    button:hover {
+      background: #c72e63;
+      cursor: pointer;
+    }
+
+    #profileHeader {
+      display: none;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      margin: 20px auto;
+      max-width: 600px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 16px;
+      text-align: left;
+    }
+
+    #profileHeader img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: 3px solid #e1306c;
+      object-fit: cover;
+      box-shadow: 0 0 8px rgba(255, 0, 130, 0.4);
+    }
+
+    .story-controls {
+      display: none;
+      justify-content: center;
+      gap: 10px;
+      margin: 20px 0;
+    }
+
+    #mediaContainer img, #mediaContainer video {
+      max-width: 90%;
+      max-height: 65vh;
+      margin: 1em auto;
+      border-radius: 20px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    }
+
+    .loading {
+      color: #888;
+      margin-top: 20px;
+    }
+
+    @media (max-width: 600px) {
+      .input-group {
+        flex-direction: column;
+      }
+
+      #profileHeader {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+/* From Uiverse.io by gustavofusco */ 
+.pencil {
+  margin-top: 100;
+  width: 10em;
+  height: 10em;
+}
+
+.pencil__body1,
+.pencil__body2,
+.pencil__body3,
+.pencil__eraser,
+.pencil__eraser-skew,
+.pencil__point,
+.pencil__rotate,
+.pencil__stroke {
+  animation-duration: 3s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.pencil__body1,
+.pencil__body2,
+.pencil__body3 {
+  transform: rotate(-90deg);
+}
+
+.pencil__body1 {
+  animation-name: pencilBody1;
+}
+
+.pencil__body2 {
+  animation-name: pencilBody2;
+}
+
+.pencil__body3 {
+  animation-name: pencilBody3;
+}
+
+.pencil__eraser {
+  animation-name: pencilEraser;
+  transform: rotate(-90deg) translate(49px,0);
+}
+
+.pencil__eraser-skew {
+  animation-name: pencilEraserSkew;
+  animation-timing-function: ease-in-out;
+}
+
+.pencil__point {
+  animation-name: pencilPoint;
+  transform: rotate(-90deg) translate(49px,-30px);
+}
+
+.pencil__rotate {
+  animation-name: pencilRotate;
+}
+
+.pencil__stroke {
+  animation-name: pencilStroke;
+  transform: translate(100px,100px) rotate(-113deg);
+}
+
+/* Animations */
+@keyframes pencilBody1 {
+  from,
+	to {
+    stroke-dashoffset: 351.86;
+    transform: rotate(-90deg);
+  }
+
+  50% {
+    stroke-dashoffset: 150.8;
+ /* 3/8 of diameter */
+    transform: rotate(-225deg);
+  }
+}
+
+@keyframes pencilBody2 {
+  from,
+	to {
+    stroke-dashoffset: 406.84;
+    transform: rotate(-90deg);
+  }
+
+  50% {
+    stroke-dashoffset: 174.36;
+    transform: rotate(-225deg);
+  }
+}
+
+@keyframes pencilBody3 {
+  from,
+	to {
+    stroke-dashoffset: 296.88;
+    transform: rotate(-90deg);
+  }
+
+  50% {
+    stroke-dashoffset: 127.23;
+    transform: rotate(-225deg);
+  }
+}
+
+@keyframes pencilEraser {
+  from,
+	to {
+    transform: rotate(-45deg) translate(49px,0);
+  }
+
+  50% {
+    transform: rotate(0deg) translate(49px,0);
+  }
+}
+
+@keyframes pencilEraserSkew {
+  from,
+	32.5%,
+	67.5%,
+	to {
+    transform: skewX(0);
+  }
+
+  35%,
+	65% {
+    transform: skewX(-4deg);
+  }
+
+  37.5%, 
+	62.5% {
+    transform: skewX(8deg);
+  }
+
+  40%,
+	45%,
+	50%,
+	55%,
+	60% {
+    transform: skewX(-15deg);
+  }
+
+  42.5%,
+	47.5%,
+	52.5%,
+	57.5% {
+    transform: skewX(15deg);
+  }
+}
+
+@keyframes pencilPoint {
+  from,
+	to {
+    transform: rotate(-90deg) translate(49px,-30px);
+  }
+
+  50% {
+    transform: rotate(-225deg) translate(49px,-30px);
+  }
+}
+
+@keyframes pencilRotate {
+  from {
+    transform: translate(100px,100px) rotate(0);
+  }
+
+  to {
+    transform: translate(100px,100px) rotate(720deg);
+  }
+}
+
+@keyframes pencilStroke {
+  from {
+    stroke-dashoffset: 439.82;
+    transform: translate(100px,100px) rotate(-113deg);
+  }
+
+  50% {
+    stroke-dashoffset: 164.93;
+    transform: translate(100px,100px) rotate(-113deg);
+  }
+
+  75%,
+	to {
+    stroke-dashoffset: 439.82;
+    transform: translate(100px,100px) rotate(112deg);
+  }
+}
+
+  </style>
+</head>
+<body>
+  <h1>Instagram Story Viewer</h1>
+
+  <div class="input-group">
+    <input type="text" id="username" placeholder="Enter Instagram username" autocomplete="off" />
+    <button onclick="fetchStories()">Fetch Stories</button>
+  </div>
+
+  <div id="profileHeader">
+    <img id="profilePic" src="" alt="Profile Picture" />
+    <div>
+      <h2 id="profileUsername"></h2>
+      <p id="profileBio"></p>
+      <div style="font-size: 0.9em; color: #777;">
+        <span id="followerCount">0</span> followers • 
+        <span id="followingCount">0</span> following
+      </div>
+    </div>
+  </div>
+
+ 
+  <div id="mediaContainer"></div>
+  <!-- Add below your mediaContainer -->
+<div id="highlightContainer"></div>
+<div id="highlightStories"></div>
+<div id="postContainer"></div>
+
+  <div class="loading" id="loading" style="display: none;">
+<!-- From Uiverse.io by gustavofusco --> 
+<svg xmlns="http://www.w3.org/2000/svg" height="200px" width="200px" viewBox="0 0 200 200" class="pencil">
+	<defs>
+		<clipPath id="pencil-eraser">
+			<rect height="30" width="30" ry="5" rx="5"></rect>
+		</clipPath>
+	</defs>
+	<circle transform="rotate(-113,100,100)" stroke-linecap="round" stroke-dashoffset="439.82" stroke-dasharray="439.82 439.82" stroke-width="2" stroke="currentColor" fill="none" r="70" class="pencil__stroke"></circle>
+	<g transform="translate(100,100)" class="pencil__rotate">
+		<g fill="none">
+			<circle transform="rotate(-90)" stroke-dashoffset="402" stroke-dasharray="402.12 402.12" stroke-width="30" stroke="hsl(223,90%,50%)" r="64" class="pencil__body1"></circle>
+			<circle transform="rotate(-90)" stroke-dashoffset="465" stroke-dasharray="464.96 464.96" stroke-width="10" stroke="hsl(223,90%,60%)" r="74" class="pencil__body2"></circle>
+			<circle transform="rotate(-90)" stroke-dashoffset="339" stroke-dasharray="339.29 339.29" stroke-width="10" stroke="hsl(223,90%,40%)" r="54" class="pencil__body3"></circle>
+		</g>
+		<g transform="rotate(-90) translate(49,0)" class="pencil__eraser">
+			<g class="pencil__eraser-skew">
+				<rect height="30" width="30" ry="5" rx="5" fill="hsl(223,90%,70%)"></rect>
+				<rect clip-path="url(#pencil-eraser)" height="30" width="5" fill="hsl(223,90%,60%)"></rect>
+				<rect height="20" width="30" fill="hsl(223,10%,90%)"></rect>
+				<rect height="20" width="15" fill="hsl(223,10%,70%)"></rect>
+				<rect height="20" width="5" fill="hsl(223,10%,80%)"></rect>
+				<rect height="2" width="30" y="6" fill="hsla(223,10%,10%,0.2)"></rect>
+				<rect height="2" width="30" y="13" fill="hsla(223,10%,10%,0.2)"></rect>
+			</g>
+		</g>
+		<g transform="rotate(-90) translate(49,-30)" class="pencil__point">
+			<polygon points="15 0,30 30,0 30" fill="hsl(33,90%,70%)"></polygon>
+			<polygon points="15 0,6 30,0 30" fill="hsl(33,90%,50%)"></polygon>
+			<polygon points="15 0,20 10,10 10" fill="hsl(223,10%,10%)"></polygon>
+		</g>
+	</g>
+</svg>
+  </div>
+
+ <div class="story-controls" id="storyControls">
+    <button onclick="prevStory()">&#8592; Prev</button>
+    <span id="storyCount"></span>
+    <button onclick="nextStory()">Next &#8594;</button>
+  </div>
+ <script>
+  let stories = [];
+  let currentIndex = 0;
+
+  async function fetchStories() {
+    const username = document.getElementById('username').value.trim();
+    const container = document.getElementById('mediaContainer');
+    const loading = document.getElementById('loading');
+    const controls = document.getElementById('storyControls');
+    const profileHeader = document.getElementById('profileHeader');
+    const postContainer = document.getElementById('postContainer');
+    const highlightContainer = document.getElementById('highlightContainer');
+    const highlightStories = document.getElementById('highlightStories');
+
+    container.innerHTML = '';
+    postContainer.innerHTML = '';
+    highlightContainer.innerHTML = '';
+    highlightStories.innerHTML = '';
+    profileHeader.style.display = 'none';
+    controls.style.display = 'none';
+    stories = [];
+    currentIndex = 0;
+
+    if (!username) {
+      container.innerHTML = '<p>Please enter a username.</p>';
+      return;
+    }
+
+    loading.style.display = 'block';
+
+    try {
+      const response = await fetch(`/api/stories?username=${encodeURIComponent(username)}`);
+      const data = await response.json();
+      loading.style.display = 'none';
+
+      if (data.error) {
+        container.innerHTML = `<p>${data.error}</p>`;
+        return;
+      }
+
+      // Show profile info
+      document.getElementById('profilePic').src = `/proxy?url=${encodeURIComponent(data.profile_pic_url)}`;
+      document.getElementById('profileUsername').textContent = data.full_name || data.username;
+      document.getElementById('profileBio').textContent = data.biography || '';
+      document.getElementById('followerCount').textContent = data.follower_count.toLocaleString();
+      document.getElementById('followingCount').textContent = data.following_count.toLocaleString();
+      profileHeader.style.display = 'flex';
+
+      // Show stories
+      if (data.stories && data.stories.length > 0) {
+        stories = data.stories;
+        currentIndex = 0;
+        showStory(currentIndex);
+        controls.style.display = 'flex';
+      } else {
+        container.innerHTML = `<p>No stories found for @${data.username}.</p>`;
+      }
+
+      // Show posts
+      if (data.posts && data.posts.length > 0) {
+        postContainer.innerHTML = '<h3>Recent Posts</h3>';
+        data.posts.forEach(post => {
+          const postMedia = document.createElement(post.type === 'video' ? 'video' : 'img');
+          postMedia.src = `/proxy?url=${encodeURIComponent(post.url)}`;
+          postMedia.style = 'max-width: 100%; margin: 10px 0; border-radius: 10px;';
+          if (post.type === 'video') {
+            postMedia.controls = true;
+          } else {
+            postMedia.alt = 'Post';
+          }
+          postContainer.appendChild(postMedia);
+        });
+      }
+
+      // Show highlights
+      if (data.highlights && data.highlights.length > 0) {
+        highlightContainer.innerHTML = '<h3>Highlights</h3>';
+        highlightContainer.style.display = 'flex';
+        highlightContainer.style.flexWrap = 'wrap';
+        highlightContainer.style.gap = '20px';
+
+        data.highlights.forEach(highlight => {
+          const circleWrapper = document.createElement('div');
+          circleWrapper.style = 'text-align: center; cursor: pointer;';
+
+          // Circle image
+          const img = document.createElement('img');
+          img.src = `/proxy?url=${encodeURIComponent(highlight.cover_url)}`;
+          img.alt = highlight.title || 'Highlight';
+          img.style = `
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 2px solid #ccc;
+            object-fit: cover;
+            transition: transform 0.2s ease-in-out;
+          `;
+          img.addEventListener('mouseover', () => img.style.transform = 'scale(1.05)');
+          img.addEventListener('mouseout', () => img.style.transform = 'scale(1)');
+
+          // Label under circle
+          const label = document.createElement('div');
+          label.textContent = highlight.title || 'Untitled';
+          label.style = 'margin-top: 8px; font-size: 14px;';
+
+          circleWrapper.appendChild(img);
+          circleWrapper.appendChild(label);
+
+          circleWrapper.addEventListener('click', () => showHighlightStories(highlight));
+
+          highlightContainer.appendChild(circleWrapper);
+        });
+      }
+
+    } catch (err) {
+      console.error('Error fetching stories:', err);
+      loading.style.display = 'none';
+      container.innerHTML = '<p>Failed to fetch stories. Please try again later.</p>';
+    }
+  }
+
+  function showStory(index) {
+    const container = document.getElementById('mediaContainer');
+    container.innerHTML = '';
+
+    if (!stories[index]) {
+      container.innerHTML = '<p>Story not found.</p>';
+      return;
+    }
+
+    const story = stories[index];
+    const proxyUrl = `/proxy?url=${encodeURIComponent(story.url)}`;
+    let mediaEl;
+
+    if (story.type === 'video') {
+      mediaEl = document.createElement('video');
+      mediaEl.src = proxyUrl;
+      mediaEl.controls = true;
+      mediaEl.autoplay = true;
+    } else {
+      mediaEl = document.createElement('img');
+      mediaEl.src = proxyUrl;
+      mediaEl.alt = 'Story';
+    }
+
+    container.appendChild(mediaEl);
+    document.getElementById('storyCount').textContent = `Story ${index + 1} of ${stories.length}`;
+  }
+
+  function prevStory() {
+    if (stories.length === 0) return;
+    currentIndex = (currentIndex - 1 + stories.length) % stories.length;
+    showStory(currentIndex);
+  }
+
+  function nextStory() {
+    if (stories.length === 0) return;
+    currentIndex = (currentIndex + 1) % stories.length;
+    showStory(currentIndex);
+  }
+
+  function showHighlightStories(highlight) {
+    const highlightStories = document.getElementById('highlightStories');
+    highlightStories.innerHTML = `<h3>${highlight.title}</h3>`;
+
+    if (!highlight.stories || highlight.stories.length === 0) {
+      highlightStories.innerHTML += '<p>No stories in this highlight.</p>';
+      return;
+    }
+
+    highlight.stories.forEach((story, idx) => {
+      const storyEl = document.createElement(story.type === 'video' ? 'video' : 'img');
+      storyEl.src = `/proxy?url=${encodeURIComponent(story.url)}`;
+      storyEl.style = 'max-width: 100%; margin: 10px 0; border-radius: 10px;';
+
+      if (story.type === 'video') {
+        storyEl.controls = true;
+      } else {
+        storyEl.alt = `Story ${idx + 1}`;
+      }
+
+      highlightStories.appendChild(storyEl);
+    });
+  }
+
+  document.getElementById('username').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') fetchStories();
+  });
+</script>
+
+
+</body>
+</html>
